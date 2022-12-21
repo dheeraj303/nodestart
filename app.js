@@ -1,25 +1,39 @@
 const http=require('http');
 const fs=require('fs');
-const server=http.createServer(function(req,res){
-    // fs.writeFile('first.txt','DUMMY',(err)=>{
-    //     console.log("File Written successfully");
-    // });
-    // console.log(req.url);
-    const url=req.url;
-    if(url==='/test'){
-        // res.write("test page");
-        res.statusCode = 302;
-        res.setHeader('Location','/');
-        res.end();
+const server = http.createServer((req, res) => {
+  
+    if(req.url==='/'){
+        // res.setHeader('Content-Type','application/html');
+       
+        fs.readFile('message.txt','utf8', function(err, data){
+                if(err){
+                    console.log(err);
+                }
+            // Display the file content
+            console.log(data);
+            res.write('<html><body>');
+            res.write(`<h1>${data}</h1>`);
+            res.write('<form action="/data" method="POST"><input type="text" name="text"><button type="submit" >send</button></form>');
+            res.write('</body></html>');
+            res.end();
+        });
+       
     }
-    else{
-    res.write('<html>');
-  res.write('<head><title>node js app</title></head>');
-  res.write('<body></h1>First Node js app</h1></body>');
-  res.write('</html>');
-  res.end();
-}
-})
-server.listen(80,()=>{
-    console.log("server start");
-})
+    if(req.url==='/data' && req.method=='POST'){
+        const body = [];
+        req.on('data', (chunk) => {
+        //   console.log(chunk);
+          body.push(chunk);
+        });
+        req.on('end', () => {
+          const parsedBody = Buffer.concat(body).toString();
+          const message = parsedBody.split('=')[1];
+          fs.writeFileSync('message.txt', message);
+        });
+        res.statusCode = 302;
+        res.setHeader('Location', '/');
+        return res.end();
+    }
+  
+}); 
+server.listen(3000);
