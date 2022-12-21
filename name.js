@@ -1,8 +1,15 @@
 const http=require('http');
 
 const server=http.createServer(function(req,res){
- 
-    res.end('<html><body><h1>Dheeraj Kumar</h1></body></html>');
+ if(req.url==='/home'){
+    res.end('<html><body><h1>Welcome home</h1></body></html>');
+ }
+ if(req.url==='/about'){
+    res.end('<html><body><h1>Welcome About us</h1></body></html>');
+ }
+ if(req.url==='/node'){
+    res.end('<html><body><h1>Welcome Node js Project</h1></body></html>');
+ }
  
 });
 
